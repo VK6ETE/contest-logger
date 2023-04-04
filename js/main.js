@@ -8,19 +8,19 @@ if (localStorage.getItem("table_rows") === null) {
 }
 
 function validate_callsignList(entry) {
-	var rowCount = localStorage.getItem("table_rows");
-	var status = false;
+	const rowCount = localStorage.getItem("table_rows");
+	let status = false;
 	if (rowCount) {
 		// fixme: There is no error checking, this is fragile, don't use this in production.
-		var rowData = Array();
-		for (var i = 0; i < rowCount; i++) {
+		const rowData = Array();
+		for (let i = 0; i < rowCount; i++) {
 			//fixme: the callsign column is hard-coded here.
 			rowData.push(
 				JSON.parse(window.localStorage.getItem("row_" + (i + 1)))[2]
 			);
 		}
-		var callsInLog = rowData.join("\n");
-		var regEx = new RegExp("\\b" + entry.target.value + "\\b", "i");
+		const callsInLog = rowData.join("\n");
+		const regEx = new RegExp("\\b" + entry.target.value + "\\b", "i");
 		status = regEx.test(callsInLog);
 	}
 	if (status) {
@@ -32,15 +32,15 @@ function validate_callsignList(entry) {
 
 function add_log_entry(myForm) {
 	//fixme: This needs to use the preferences that allows the logging of an invalid contact
-	var invalid = !document.getElementById("logForm").checkValidity();
-	var table = document.getElementById("current_log");
-	var row = table.insertRow(1);
-	row.insertCell(-1).textContent = table.rows.length - 1;
+	const invalid = !document.getElementById("logForm").checkValidity();
+	const table = document.getElementById("current_log");
+	const row = table.insertRow(1);
+	row.insertCell(-1).textContent = table.rows.length - 1; // Assigned expression type number is not assignable to type string
 	if (invalid) {
 		row.className = "invalid";
 		window.localStorage.setItem("status_" + (table.rows.length - 1), "invalid");
 	}
-	var rowData = Array();
+	const rowData = Array();
 	Array.from(myForm.elements).forEach((input) => {
 		row.insertCell(-1).textContent = input.value;
 		rowData.push(input.value);
@@ -49,19 +49,20 @@ function add_log_entry(myForm) {
 		"row_" + (table.rows.length - 1),
 		JSON.stringify(rowData)
 	);
-	window.localStorage.setItem("table_rows", table.rows.length - 1);
+	window.localStorage.setItem("table_rows", table.rows.length - 1); // Assigned expression type number is not assignable to type string
 }
 
-function exportLog() {
-	// Source: https://www.tutorialspoint.com/how-to-create-and-save-text-file-in-javascript
+function exportLog() { // Unused function exportLog
+	let content;
+// Source: https://www.tutorialspoint.com/how-to-create-and-save-text-file-in-javascript
 	const link = document.createElement("a");
-	var rowCount = localStorage.getItem("table_rows");
+	const rowCount = localStorage.getItem("table_rows");
 	if (rowCount) {
 		// fixme: There is no error checking, this is fragile, don't use this in production.
-		var rowData = Array();
-		var status = "";
-		var content = "";
-		for (var i = 0; i < rowCount; i++) {
+		const rowData = Array();
+		let status = "";
+		content = "";
+		for (let i = 0; i < rowCount; i++) {
 			if (window.localStorage.getItem("status_" + (i + 1))) {
 				status = "**Invalid**";
 			} else {
@@ -80,7 +81,7 @@ function exportLog() {
 	const file = new Blob([content], { type: "text/csv" });
 	link.href = URL.createObjectURL(file);
 	link.download =
-		document.getElementById("current_log").attributes.name.nodeValue +
+		document.getElementById("current_log").attributes.name.nodeValue + // Unresolved variable name
 		"." +
 		new Date().toISOString() +
 		".csv";
@@ -106,17 +107,17 @@ function init() {
 		document.getElementsByName("utc")[0].value = get_time();
 	}, 1000);
 
-	var rowCount = localStorage.getItem("table_rows");
+	const rowCount = localStorage.getItem("table_rows");
 	if (rowCount) {
 		// fixme: There is no error checking, this is fragile, don't use this in production.
-		var table = document.getElementById("current_log");
-		for (var i = 0; i < rowCount; i++) {
-			var row = table.insertRow(1);
+		const table = document.getElementById("current_log");
+		for (let i = 0; i < rowCount; i++) {
+			const row = table.insertRow(1);
 			if (window.localStorage.getItem("status_" + (i + 1))) {
 				row.className = "invalid";
 			}
-			row.insertCell(-1).textContent = i + 1;
-			var rowData = JSON.parse(window.localStorage.getItem("row_" + (i + 1)));
+			row.insertCell(-1).textContent = i + 1; // Assigned expression type number is not assignable to type string
+			const rowData = JSON.parse(window.localStorage.getItem("row_" + (i + 1)));
 			rowData.forEach((value) => (row.insertCell(-1).textContent = value));
 		}
 	}
